@@ -61,7 +61,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EBDBFF372FF15A33009D9148"
             BuildableName = "LGWatch Watch App.app"
-            BlueprintName = "LGWatch Watch App"
             ReferencedContainer = "container:LifeGame.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -78,7 +77,6 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "EBDBFF372FF15A33009D9148"
             BuildableName = "LGWatch Watch App.app"
-            BlueprintName = "LGWatch Watch App"
             ReferencedContainer = "container:LifeGame.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
