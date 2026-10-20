@@ -26,7 +26,18 @@ struct DailyLogHistoryView: View {
             }
 
             List {
-                if store.entries.isEmpty {
+                if store.isPreparing {
+                    // 載入要把每一筆紀錄解碼一次，資料多的時候要等一下。
+                    // 這裡不能顯示「還沒有紀錄」—— 那會讓人以為紀錄不見了。
+                    HStack(spacing: 10) {
+                        ProgressView()
+                        Text("載入紀錄中…")
+                            .foregroundStyle(.secondary)
+                    }
+                    .frame(maxWidth: .infinity, alignment: .center)
+                    .padding(.vertical, 24)
+                    .listRowSeparator(.hidden)
+                } else if store.entries.isEmpty {
                     ContentUnavailableView("還沒有紀錄",
                                            systemImage: "square.and.pencil",
                                            description: Text("按右下角 ＋ 新增第一篇每日紀錄"))
@@ -75,6 +86,8 @@ struct DailyLogHistoryView: View {
         }
         .navigationTitle("每日紀錄")
         .onAppear {
+            // entries 是這個畫面才需要的，store 建立時刻意沒載入（見 DailyLogStore.isLoaded）
+            store.ensureLoaded()
             fab.apply(context: .feature(.dailyLog))
             rebuildGroupsIfNeeded()
         }
@@ -105,9 +118,11 @@ struct DailyLogHistoryView: View {
                     DailyLogEditorView(mode: .add, store: store)
                 }
             case .review:
-                DailyLogReviewRangeSheet(allEntries: store.entries)
+                DailyLogReviewRangeSheet(allEntries: store.entries,
+                                         loadFull: { store.fullEntry(id: $0) })
             case .export:
-                DailyLogExportSheet(allEntries: store.entries)
+                DailyLogExportSheet(allEntries: store.entries,
+                                    loadFull: { store.fullEntry(id: $0) })
             case .fontSize:
                 DailyLogFontSizeSheet()
             }

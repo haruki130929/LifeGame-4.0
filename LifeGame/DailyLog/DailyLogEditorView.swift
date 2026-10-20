@@ -38,7 +38,10 @@ struct DailyLogEditorView: View {
                 case .add:
                     draft = DailyLogEntry()
                 case .edit(let existing):
-                    draft = existing
+                    // 清單傳進來的 entry 不含照片（見 DailyLogRecord.summary），
+                    // 直接拿它當 draft 存回去會把那天的照片全部洗掉。
+                    // 所以這裡一定要用 fullEntry 把完整內容撈回來。
+                    draft = store.fullEntry(id: existing.id) ?? existing
                 }
             }
     }

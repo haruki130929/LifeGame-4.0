@@ -1,7 +1,10 @@
 import SwiftUI
 
 struct DailyLogExportSheet: View {
+    /// 不含照片的輕量紀錄，只用來挑日期區間（見 DailyLogRecord.summary）
     let allEntries: [DailyLogEntry]
+    /// 把選中的那幾筆換成含照片的完整版。沒有它，匯出的照片數會變成 0。
+    let loadFull: (UUID) -> DailyLogEntry?
 
     @EnvironmentObject private var moduleStore: QuestionModuleStore
     @Environment(\.dismiss) private var dismiss
@@ -194,6 +197,8 @@ struct DailyLogExportSheet: View {
                 return d >= s && d <= e
             }
             .sorted { $0.date < $1.date }
+            // 只有真的要匯出的那幾天才去撈照片
+            .map { loadFull($0.id) ?? $0 }
     }
 
     private func rangeTitle(_ s: Date, _ e: Date) -> String {

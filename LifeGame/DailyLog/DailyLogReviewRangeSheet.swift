@@ -1,8 +1,11 @@
 import SwiftUI
 
 struct DailyLogReviewRangeSheet: View {
+    /// 不含照片的輕量紀錄，只用來挑日期區間（見 DailyLogRecord.summary）
     let allEntries: [DailyLogEntry]
-    
+    /// 把選中的那幾筆換成含照片的完整版。沒有它，檢視畫面的照片會全部不見。
+    let loadFull: (UUID) -> DailyLogEntry?
+
     @Environment(\.dismiss) private var dismiss
     
     @State private var startDate: Date = Calendar.current.date(byAdding: .day, value: -7, to: .now) ?? .now
@@ -74,6 +77,8 @@ struct DailyLogReviewRangeSheet: View {
                 return d >= startDay && d <= endDay
             }
             .sorted { $0.date < $1.date }
+            // 只有真的要看的那幾天才去撈照片，不是整個資料庫
+            .map { loadFull($0.id) ?? $0 }
     }
 }
 

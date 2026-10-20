@@ -133,10 +133,12 @@ final class MigrationManager {
                 if let existing = existingItems.first(where: { $0.id == item.id }) {
                     existing.date = item.date
                     existing.payload = item.payload
+                    existing.summary = item.summary
                 }
             } else {
-                // 不存在 → 建立新副本
-                let copy = DailyLogRecord(id: item.id, date: item.date, payload: item.payload)
+                // 不存在 → 建立新副本。summary 一起帶過去，省得搬完還要重新解一次 payload。
+                let copy = DailyLogRecord(id: item.id, date: item.date,
+                                          payload: item.payload, summary: item.summary)
                 destination.insert(copy)
             }
         }

@@ -118,12 +118,17 @@ enum BackupManager {
             )
             descriptor.fetchLimit = 1
 
+            // 備份檔裡沒有 summary（它是衍生資料，不值得佔備份空間），所以匯入後要重算。
+            // 不重算的話，舊的 summary 會留著，清單就會顯示匯入前的內容。
             if let existing = try context.fetch(descriptor).first {
                 existing.date = entry.date
                 existing.payload = entry.payload
+                existing.rebuildSummary()
                 result.dailyLogUpdated += 1
             } else {
-                context.insert(DailyLogRecord(id: entry.id, date: entry.date, payload: entry.payload))
+                let record = DailyLogRecord(id: entry.id, date: entry.date, payload: entry.payload)
+                record.rebuildSummary()
+                context.insert(record)
                 result.dailyLogInserted += 1
             }
         }
